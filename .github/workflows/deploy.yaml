@@ -55,7 +55,7 @@ jobs:
     - name: Deploy to GitHub Pages
       uses: bluefireteam/flutter-gh-pages@v7
       with:
-          webRenderer: htmlRenderer
+          webRenderer: canvaskit
           targetBranch: gh-pages
           baseHref: /pixabay_dummy/
           customArgs: --dart-define="KEY=${{ secrets.KEY }}"
