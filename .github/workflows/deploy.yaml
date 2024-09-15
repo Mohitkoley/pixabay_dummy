@@ -42,7 +42,7 @@ jobs:
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git remote add origin https://github.com/Mohitkoley/pixabay_dummy.git
+        if git remote | grep origin; then git remote set-url origin https://github.com/Mohitkoley/pixabay_dummy.git; else git remote add origin https://github.com/Mohitkoley/pixabay_dummy.git; fi
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
