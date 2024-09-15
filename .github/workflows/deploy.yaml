@@ -27,6 +27,7 @@ jobs:
       with:
           flutter-version: '3.24.0'
           channel: 'stable'
+          cache: true
 
     - name: verify flutter version
       run: flutter --version
@@ -35,7 +36,13 @@ jobs:
       run: flutter pub get
 
     - name: Build Flutter web
-      run: flutter build web --dart-define=KEY=${{ secrets.KEY }}
+      run: flutter build web --release --dart-define=KEY=${{ secrets.KEY }}
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git remote add origin https://github.com/Mohitkoley/pixabay_dummy.git
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
