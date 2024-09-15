@@ -14,26 +14,20 @@ ifndef NAME
 	$(error NAME is not set. Usage: make deploy NAME=<name>)
 endif
 
-	@echo "Clean existing repository"
-	flutter clean
-
 	@echo "Getting packages..."
 	flutter pub get
-
-	@echo "Generating the web folder..."
-	flutter create . --platform web
 
 	@echo "Building for web..."
 	flutter build web --base-href $(BASE_HREF) --release --dart-define=KEY=${KEY}
 
 	@echo "Deploying to git repository"
-	cd /build/web && \
+	cd build/web && \
 	git init && \
 	git add . && \
 	git commit -m "Deploy Version $(BUILD_VERSION)" && \
-	git branch -M main && \
+	git branch -M gh-pages && \
 	git remote add origin $(GITHUB_REPO) && \
-	git push -u -f origin main
+	git push -u -f origin gh-pages
 
 	@echo "✅ Finished deploy: $(GITHUB_REPO)"
 	@echo "🚀 Flutter web URL: https://$(GITHUB_USER).github.io/$(NAME)/"
