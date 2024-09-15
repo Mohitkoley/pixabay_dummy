@@ -7,6 +7,9 @@ on:
 
 jobs:
   build:
+    permissions:
+      contents: write
+      packages: write
     runs-on: macos-latest
 
     steps:
@@ -17,7 +20,8 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'zulu'
-        java-version: '12'
+        java-version: '21'
+        cache: gradle
 
     - name: Create .env File
       run: echo "KEY=${{ secrets.KEY }}" > .env
@@ -74,7 +78,7 @@ jobs:
             - Build ${{ github.run_number }}
             - Commit ${{ github.sha }}
             - Branch ${{ github.ref }}
-            - Author ${{ github.actor }}```
+            - Author ${{ github.actor }}
         name: v1.0.${{ github.run_number }}
         prerelease: false
         draft: false
