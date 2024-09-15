@@ -1,39 +1,28 @@
-# Makefile for deploying the Flutter web projects to GitHub
+# Makefile for deploying Flutter web app to GitHub Pages
 
-BASE_HREF = /$(OUTPUT)/
-# Replace this with your GitHub username
-GITHUB_USER = Mohitkoley
-GITHUB_REPO = https://github.com/$(GITHUB_USER)/$(OUTPUT)
+# Update These Variables
+BASE_HREF = '/pixabay_dummy/'  # /pixabay_dummy/ represents the name of the repository
+GITHUB_REPO = git@github.com:Mohitkoley/pixabay_dummy.git
 BUILD_VERSION := $(shell grep 'version:' pubspec.yaml | awk '{print $$2}')
 
-# Deploy the Flutter web project to GitHub
-deploy:
-ifndef OUTPUT
-  $(error OUTPUT is not set. Usage: make deploy OUTPUT=<output_repo_name>)
-endif
+deploy-web:
+    @echo "Clean existing repository..." # print the log
+    flutter clean  # flutter command
 
-  @echo "Clean existing repository"
-  flutter clean
+    @echo "Getting packages..."  # print the log
+    flutter pub get # flutter command
 
-  @echo "Getting packages..."
-  flutter pub get
+    @echo "Building for web..."  # print the log
+    flutter build web --base-href $(BASE_HREF) --release   # this command uses the BASE_HREF in your index.html and base_href value is getting from the above variable
 
-  @echo "Generating the web folder..."
-  flutter create . --platform web
+    @echo "Deploying to git repository"
+    cd build/web && \
+    git init && \
+    git add . && \
+    git commit -m "Deploy Version $(BUILD_VERSION)" && \
+    git branch -M main && \
+    git remote add origin $(GITHUB_REPO) && \
+    git push -f origin main
 
-  @echo "Building for web..."
-  flutter build web --base-href $(BASE_HREF) --release
-
-  @echo "Deploying to git repository"
-  cd build/web && \
-  git init && \
-  git add . && \
-  git commit -m "Deploy Version $(BUILD_VERSION)" && \
-  git branch -M main && \
-  git remote add origin $(GITHUB_REPO) && \
-  git push -u -f origin main
-
-  @echo "✅ Finished deploy: $(GITHUB_REPO)"
-  @echo "🚀 Flutter web URL: https://$(GITHUB_USER).github.io/$(OUTPUT)/"
-
-.PHONY: deploy
+    @echo "Deployed Successfully!"  # print the log
+.PHONY: deploy-web
