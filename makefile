@@ -1,28 +1,41 @@
-# Makefile for deploying Flutter web app to GitHub Pages
+# Makefile for deploying the Flutter web projects to GitHub
 
-# Update These Variables
-BASE_HREF = '/pixabay_dummy/'  # /pixabay_dummy/ represents the name of the repository
-GITHUB_REPO = git@github.com:Mohitkoley/pixabay_dummy.git
-BUILD_VERSION := $(shell grep 'version:' pubspec.yaml | awk '{print $$2}')
+BASE_HREF = /$(NAME)/
+# Replace with your GitHub username
+GITHUB_USER = Mohitkoley
+GITHUB_REPO = https://github.com/$(GITHUB_USER)/$(NAME)
+BUILD_VERSION := $(if $(NAME),$(shell grep 'version:' $(NAME)/pubspec.yaml | awk '{print $$2}'))
 
-deploy-web:
-    @echo "Clean existing repository..." # print the log
-    flutter clean  # flutter command
+include .env
 
-    @echo "Getting packages..."  # print the log
-    flutter pub get # flutter command
+# Deploy the Flutter web project to GitHub
+deploy:
+ifndef NAME
+	$(error NAME is not set. Usage: make deploy NAME=<name>)
+endif
 
-    @echo "Building for web..."  # print the log
-    flutter build web --base-href $(BASE_HREF) --release   # this command uses the BASE_HREF in your index.html and base_href value is getting from the above variable
+	@echo "Clean existing repository"
+	flutter clean
 
-    @echo "Deploying to git repository"
-    cd build/web && \
-    git init && \
-    git add . && \
-    git commit -m "Deploy Version $(BUILD_VERSION)" && \
-    git branch -M main && \
-    git remote add origin $(GITHUB_REPO) && \
-    git push -f origin main
+	@echo "Getting packages..."
+	flutter pub get
 
-    @echo "Deployed Successfully!"  # print the log
-.PHONY: deploy-web
+	@echo "Generating the web folder..."
+	flutter create . --platform web
+
+	@echo "Building for web..."
+	flutter build web --base-href $(BASE_HREF) --release --dart-define=KEY=${KEY}
+
+	@echo "Deploying to git repository"
+	cd /build/web && \
+	git init && \
+	git add . && \
+	git commit -m "Deploy Version $(BUILD_VERSION)" && \
+	git branch -M main && \
+	git remote add origin $(GITHUB_REPO) && \
+	git push -u -f origin main
+
+	@echo "✅ Finished deploy: $(GITHUB_REPO)"
+	@echo "🚀 Flutter web URL: https://$(GITHUB_USER).github.io/$(NAME)/"
+
+.PHONY: deploy

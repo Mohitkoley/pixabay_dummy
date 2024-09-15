@@ -36,7 +36,7 @@ jobs:
       run: flutter pub get
 
     - name: Build Flutter web
-      run: flutter build web --release --dart-define=KEY=${{ secrets.KEY }}
+      run: flutter build web --release
 
     - name: Set up Git
       run: |
@@ -44,11 +44,21 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         if git remote | grep origin; then git remote set-url origin https://github.com/Mohitkoley/pixabay_dummy.git; else git remote add origin https://github.com/Mohitkoley/pixabay_dummy.git; fi
 
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
+    # - name: Deploy to GitHub Pages
+    #   uses: peaceiris/actions-gh-pages@v4
+    #   with:
+    #     github_token: ${{ secrets.TOKEN }}
+    #     publish_dir: build/web
+    #     allow_empty_commit: true
+    #     force_orphan: true
+
+    - uses: bluefireteam/flutter-gh-pages@v7
       with:
-        github_token: ${{ secrets.TOKEN }}
-        publish_dir: build/web
-        allow_empty_commit: true
-        force_orphan: true
+          workingDir: build/web
+          webRenderer: canvaskit
+          targetBranch: gh-pages
+          baseHref: /pixabay_dummy/
+          customArgs: --dart-define="KEY=${{ secrets.KEY }}"
+          
+      
 
