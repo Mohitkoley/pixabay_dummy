@@ -20,7 +20,7 @@ jobs:
         java-version: '12'
 
     - name: Create .env File
-      run: echo "API_KEY=${{ secrets.KEY }}" > .env
+      run: echo "KEY=${{ secrets.KEY }}" > .env
 
     - name: Set up Flutter
       uses: subosito/flutter-action@v2
