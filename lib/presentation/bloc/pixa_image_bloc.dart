@@ -16,12 +16,7 @@ class PixaImageBloc extends Bloc<PixaImageBlocEvent, PixaImageBlocState> {
         _searchImages = searchImages,
         super(ImageBlocInitial()) {
     on<PixaImageBlocEvent>((event, emit) {});
-    on<FetchImagesEvent>((event, emit) async {
-      await _onFetchImage(
-        event,
-        emit,
-      );
-    });
+    on<FetchImagesEvent>(_onFetchImage);
     on<FetchImagesAtBottom>(_onFetchImagesAtBottom);
     on<SearchImagesEvent>(_onSearch);
   }

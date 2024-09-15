@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - name: Checkout code
@@ -51,6 +51,33 @@ jobs:
         publish_dir: build/web
         allow_empty_commit: true
         force_orphan: true
+    
+    - name: Build APK and ios
+      run:  flutter build apk --release --split-per-abi
+    - run: |
+          flutter build ios --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
+      
+        #upload apk to artifacts with the name weather_app.apk with each iteration inceament the version code
+    - name: Push to Releases
+      uses: ncipollo/release-action@v1
+      with:
+        artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+        tag: v1.0.${{ github.run_number }}
+        token: ${{ secrets.TOKEN }}
+        body: |
+            - Build ${{ github.run_number }}
+            - Commit ${{ github.sha }}
+            - Branch ${{ github.ref }}
+            - Author ${{ github.actor }}```
+        name: v1.0.${{ github.run_number }}
+        prerelease: false
+        draft: false
      
     # - name: Deploy to GitHub Pages
     #   uses: bluefireteam/flutter-gh-pages@v7
